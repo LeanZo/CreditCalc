@@ -1,0 +1,7 @@
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\CreditCalc\bin\Debug\CreditCalc.exe.config
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.exe.config
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.exe
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.pdb
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.csprojResolveAssemblyReference.cache
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.exe
+C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.pdb
