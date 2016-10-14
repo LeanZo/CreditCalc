@@ -17,15 +17,16 @@ namespace CreditCalc
             Console.WriteLine("Escolha uma operação");
             Console.WriteLine("1 - Adicionar");
             Console.WriteLine("2 - Remover (NOT WORKING)");
-            Console.WriteLine("3 - Consultar(NOT WORKING)");
+            Console.WriteLine("3 - Consultar");
             Console.Write(">");
             int startresp;
+            string nulltest = "undefined";
             try
             {
                 startresp = Convert.ToInt32(Console.ReadLine());
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
                 Console.WriteLine("Enter para continuar");
@@ -33,7 +34,7 @@ namespace CreditCalc
                 Start(today, FSdocPath);
                 return;
             }
-                bool interruptor = true;
+            bool interruptor = true;
 
             while (interruptor)
             {
@@ -43,10 +44,23 @@ namespace CreditCalc
                         Adicionar(today, FSdocPath);
                         interruptor = false;
                         break;
+                    case 3:
+                        Consultar(FSdocPath);
+                        interruptor = false;
+                        break;
                     default:
                         Console.WriteLine("Sua resposta não é valida, digite uma das opções acima:");
                         Console.Write(">");
-                        startresp = Convert.ToInt32(Console.ReadLine());
+                        nulltest = Console.ReadLine();
+                        if (String.IsNullOrEmpty(nulltest))
+                        {
+                            startresp = 50;
+                        }
+                        else
+                        {
+                            startresp = Convert.ToInt32(nulltest);
+                        }
+
                         break;
                 }
             }
@@ -74,6 +88,7 @@ namespace CreditCalc
                 return;
             }
 
+            string nulltest = "undefined";
             bool interruptor = true;
             while (interruptor)
             {
@@ -87,17 +102,32 @@ namespace CreditCalc
                         Console.Clear();
                         Console.Write("Digite o dia, mês e ano(dd/MM/yyyy): ");
                         data = Console.ReadLine();
-                        if(String.IsNullOrEmpty(data))
+                        if (String.IsNullOrEmpty(data))
                             data = DateTime.Now.ToString("dd/MM/yyyy");
                         interruptor = false;
                         break;
                     default:
                         Console.WriteLine("Sua resposta não é valida, digite uma das opções acima:");
                         Console.Write(">");
-                        respdata = Convert.ToInt32(Console.ReadLine());
+                        nulltest = Console.ReadLine();
+                        if (String.IsNullOrEmpty(nulltest))
+                        {
+                            respdata = 50;
+                        }
+                        else
+                        {
+                            respdata = Convert.ToInt32(nulltest);
+                        }
                         break;
                 }
             }
+
+            Console.Clear();
+            Console.WriteLine("Insira uma descrição");
+            Console.Write(">");
+            string descricao = Console.ReadLine();
+            if (String.IsNullOrEmpty(descricao))
+                descricao = "---";
 
             Console.Clear();
             Console.WriteLine("Digite o valor:");
@@ -109,25 +139,50 @@ namespace CreditCalc
 
             Dictionary<string, string> dicio = new Dictionary<string, string>();
             dicio.Add(data, valor);
-            
-                foreach (var entry in dicio)
-                {
-                    string entrykey = "(" + entry.Key + ", " + entry.Value + ")";
-                    File.AppendAllText(FSdocPath, entrykey + Environment.NewLine);
-                }
+
+            foreach (var entry in dicio)
+            {
+                string entrykey = entry.Key + "," + descricao + "," + entry.Value;
+                File.AppendAllText(FSdocPath, entrykey + Environment.NewLine);
+            }
             Console.WriteLine("Adicionado!");
 
         }
 
-     /*   static void Remover()
-        {
-            var arraymeu = File.ReadAllLines(FSdocPath);
-            for (var i = 0; i < arraymeu.Length; i += 2)
-            {
-                dicio.Add(arraymeu[i + 1], arraymeu[i]);
-            }
+        /*   static void Remover()
+           {
+               var arraymeu = File.ReadAllLines(FSdocPath);
+               for (var i = 0; i < arraymeu.Length; i += 2)
+               {
+                   dicio.Add(arraymeu[i + 1], arraymeu[i]);
+               }
 
-        } */
+           } */
+
+        static void Consultar(string FSdocPath)
+        {
+            Console.Clear();
+            int count = 0;
+            var textLines = File.ReadAllLines(FSdocPath);
+            string[] dataArray = new string[textLines.Length];
+            foreach (var line in textLines)
+            {
+                for (int i = 0; i < dataArray.Length; i++)
+                {
+                        dataArray = line.Split(',');
+
+                        Console.Write(dataArray[i]);
+
+                        Console.Write("      ");
+                        count++;
+                    if ((count % 3) == 0) {
+                        Console.WriteLine();
+                    }
+                    }
+
+            }
+        }
+
 
         static void Main(string[] args)
         {
