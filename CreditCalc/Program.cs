@@ -45,7 +45,7 @@ namespace CreditCalc
                         interruptor = false;
                         break;
                     case 3:
-                        Consultar(FSdocPath);
+                        Consultar(today, FSdocPath);
                         interruptor = false;
                         break;
                     default:
@@ -146,6 +146,15 @@ namespace CreditCalc
                 File.AppendAllText(FSdocPath, entrykey + Environment.NewLine);
             }
             Console.WriteLine("Adicionado!");
+            Console.WriteLine("Realizar outra operação? (S/N)");
+            string respagain = Console.ReadLine().ToUpper();
+            if (respagain == "S")
+            {
+                Adicionar(today, FSdocPath);
+            } else
+            {
+                Start(today, FSdocPath);
+            }
 
         }
 
@@ -159,7 +168,7 @@ namespace CreditCalc
 
            } */
 
-        static void Consultar(string FSdocPath)
+        static void Consultar(string today, string FSdocPath)
         {
             Console.Clear();
             int count = 0;
@@ -181,6 +190,9 @@ namespace CreditCalc
                     }
 
             }
+            Console.WriteLine("Enter: Voltar");
+            Console.ReadKey();
+            Start(today, FSdocPath);
         }
 
 
