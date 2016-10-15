@@ -16,7 +16,7 @@ namespace CreditCalc
             Console.Clear();
             Console.WriteLine("Escolha uma operação");
             Console.WriteLine("1 - Adicionar");
-            Console.WriteLine("2 - Remover (NOT WORKING)");
+            Console.WriteLine("2 - Remover");
             Console.WriteLine("3 - Consultar");
             Console.Write(">");
             int startresp;
@@ -42,6 +42,10 @@ namespace CreditCalc
                 {
                     case 1:
                         Adicionar(today, FSdocPath);
+                        interruptor = false;
+                        break;
+                    case 2:
+                        Remover(today, FSdocPath);
                         interruptor = false;
                         break;
                     case 3:
@@ -100,7 +104,8 @@ namespace CreditCalc
                         break;
                     case 2:
                         Console.Clear();
-                        Console.Write("Digite o dia, mês e ano(dd/MM/yyyy): ");
+                        Console.WriteLine("Digite o dia, mês e ano(dd/MM/yyyy)");
+                        Console.Write(">");
                         data = Console.ReadLine();
                         if (String.IsNullOrEmpty(data))
                             data = DateTime.Now.ToString("dd/MM/yyyy");
@@ -123,6 +128,7 @@ namespace CreditCalc
             }
 
             Console.Clear();
+            Console.WriteLine("Data: {0}", data);
             Console.WriteLine("Insira uma descrição");
             Console.Write(">");
             string descricao = Console.ReadLine();
@@ -130,8 +136,9 @@ namespace CreditCalc
                 descricao = "---";
 
             Console.Clear();
-            Console.WriteLine("Digite o valor:");
-            Console.Write(">");
+            Console.WriteLine("Data:              {0}", data);
+            Console.WriteLine("Descrição:         {0}", descricao);
+            Console.Write    ("Digite o valor:    R$ ");
             string valor = Console.ReadLine();
             valor = valor.Replace(',', '.');
             if (String.IsNullOrEmpty(valor))
@@ -145,7 +152,9 @@ namespace CreditCalc
                 string entrykey = entry.Key + "," + descricao + "," + entry.Value;
                 File.AppendAllText(FSdocPath, entrykey + Environment.NewLine);
             }
+            Console.WriteLine();
             Console.WriteLine("Adicionado!");
+            Console.WriteLine();
             Console.WriteLine("Realizar outra operação? (S/N)");
             string respagain = Console.ReadLine().ToUpper();
             if (respagain == "S")
@@ -158,15 +167,71 @@ namespace CreditCalc
 
         }
 
-        /*   static void Remover()
-           {
-               var arraymeu = File.ReadAllLines(FSdocPath);
-               for (var i = 0; i < arraymeu.Length; i += 2)
-               {
-                   dicio.Add(arraymeu[i + 1], arraymeu[i]);
-               }
+        static void Remover(string today, string FSdocPath)
+        {
+            Console.Clear();
+            var textLines = File.ReadAllLines(FSdocPath);
+            List<string[]> dataList = new List<string[]>();
+            int count = 0;
+            string[] dataArray = new string[textLines.Length];
+            foreach (var line in textLines)
+            {
 
-           } */
+                dataArray[count] = line;
+                count++;
+
+            }
+            count = 0;
+            foreach(var line in dataArray)
+            {
+                count++;
+                Console.WriteLine("ID {0} - {1}", count, dataArray[count-1]);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Digite o ID que deseja remover (Deixar em branco para voltar)");
+            Console.Write(">");
+            bool interruptor = true;
+            string respbruto = Console.ReadLine();
+            int removerresp = 0;
+            while (interruptor) {
+                if (String.IsNullOrEmpty(respbruto))
+                    Start(today, FSdocPath);
+                removerresp = Convert.ToInt32(respbruto);
+
+                if (removerresp > count)
+                {
+                    Console.WriteLine("Sua resposta não é valida, digite um dos ID's acima (Deixar em branco para voltar)");
+                    Console.Write(">");
+                    respbruto = Console.ReadLine();
+                }else
+                {
+                    interruptor = false;
+                }
+            }
+            string[] dataArrayOrg = new string[dataArray.Length - 1];
+            dataArray[removerresp - 1] = null;
+            count = 0;
+            for (int i = 0; i < dataArray.Length; i++)
+            {
+                if(dataArray[i] != null)
+                {
+                    if (i == count)
+                    {
+                        string dataArraystring = dataArray[i];
+                        dataArrayOrg[i] = dataArraystring;
+                        count++;
+                    } else
+                    {
+                        string dataArraystring = dataArray[i];
+                        dataArrayOrg[i - 1] = dataArraystring;
+                        count++;
+                    }
+                    }
+                    
+            }
+            File.WriteAllLines(FSdocPath, dataArrayOrg);
+                Remover(today, FSdocPath);
+        }
 
         static void Consultar(string today, string FSdocPath)
         {
@@ -190,6 +255,7 @@ namespace CreditCalc
                     }
 
             }
+            Console.WriteLine();
             Console.WriteLine("Enter: Voltar");
             Console.ReadKey();
             Start(today, FSdocPath);
@@ -206,7 +272,7 @@ namespace CreditCalc
             if (File.Exists(FSdocPath))
             {
                 FSdoc = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc"), FileMode.Open, FileAccess.ReadWrite);
-                Console.WriteLine("'CreditCalc.fsdoc' Encontrado");
+                Console.WriteLine("CreditCalc.fsdoc Encontrado");
             }
             else
             {
