@@ -94,6 +94,7 @@ namespace CreditCalc
 
             string nulltest = "undefined";
             bool interruptor = true;
+            bool interruptor2 = true;
             while (interruptor)
             {
                 switch (respdata)
@@ -106,10 +107,24 @@ namespace CreditCalc
                         Console.Clear();
                         Console.WriteLine("Digite o dia, mês e ano(dd/MM/yyyy)");
                         Console.Write(">");
-                        data = Console.ReadLine();
-                        if (String.IsNullOrEmpty(data))
+                        do
+                        {
+                            try
+                            {
+                                data = Console.ReadLine();
+                                DateTime datatime = Convert.ToDateTime(data);
+                                interruptor2 = false;
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Formato invalido! Insira a data corretamente");
+                                Console.Write(">");
+                            }
+                        } while (interruptor2);
+                            if (String.IsNullOrEmpty(data))
                             data = DateTime.Now.ToString("dd/MM/yyyy");
                         interruptor = false;
+
                         break;
                     default:
                         Console.WriteLine("Sua resposta não é valida, digite uma das opções acima:");
@@ -129,9 +144,10 @@ namespace CreditCalc
 
             Console.Clear();
             Console.WriteLine("Data: {0}", data);
-            Console.WriteLine("Insira uma descrição");
+            Console.WriteLine("Insira uma descrição (apenas 25 caracteres)");
             Console.Write(">");
-            string descricao = Console.ReadLine();
+            string descricaobruto = Console.ReadLine();
+            string descricao = descricaobruto.Substring(0, descricaobruto.Length);
             if (String.IsNullOrEmpty(descricao))
                 descricao = "---";
 
@@ -236,7 +252,25 @@ namespace CreditCalc
         static void Consultar(string today, string FSdocPath)
         {
             Console.Clear();
+            Console.WriteLine("Qual ano deseja verificar?");
+            Console.Write(">");
+            string anoresp = Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Ano: {0}", anoresp);
+            Console.WriteLine("Qual mês deseja verificar?");
+            Console.Write(">");
+            string mesresp = Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Consultando: {0}/{1}", mesresp, anoresp);
+            Console.WriteLine();
+            string datetemp = @"01/" + mesresp + @"/" + anoresp;
+            string databruta = datetemp;
+            DateTime dataliquida = Convert.ToDateTime(databruta);
+            DateTime dataTimeArray = new DateTime();
+            string dataArraystring = "undefined";
+
             int count = 0;
+            int count2 = 0;
             var textLines = File.ReadAllLines(FSdocPath);
             string[] dataArray = new string[textLines.Length];
             foreach (var line in textLines)
@@ -244,13 +278,32 @@ namespace CreditCalc
                 for (int i = 0; i < dataArray.Length; i++)
                 {
                         dataArray = line.Split(',');
-
+                    if (count2 == 0)
+                    {
+                        dataArraystring = Convert.ToString(dataArray[i]);
+                        dataTimeArray = Convert.ToDateTime(dataArraystring);
+                    }
+                   if (dataTimeArray.Year == dataliquida.Year && dataTimeArray.Month == dataliquida.Month)
+                        {
                         Console.Write(dataArray[i]);
 
                         Console.Write("      ");
                         count++;
-                    if ((count % 3) == 0) {
-                        Console.WriteLine();
+                        count2++;
+                        if ((count % 3) == 0)
+                        {
+                            Console.WriteLine();
+                            count2 = 0;
+                        }
+                    } else
+                    {
+                        count++;
+                        count2++;
+                        if ((count % 3) == 0)
+                        {
+                            count2 = 0;
+                        }
+
                     }
                     }
 
