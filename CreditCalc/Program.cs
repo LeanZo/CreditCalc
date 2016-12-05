@@ -255,15 +255,17 @@ namespace CreditCalc
             Console.WriteLine("Selecione o que deseja mostrar:");
             Console.WriteLine("1 - Tudo");
             Console.WriteLine("2 - Mês/Ano Especifico");
+            Console.WriteLine("3 - {0}/{1}", DateTime.Today.Month, DateTime.Today.Year);
             Console.Write(">");
             int respconsulta = 0;
+            int respconsulta3 = 0;
             bool interruptorconsulta = true;
             do
             {
                 try
                 {
                     respconsulta = Convert.ToInt32(Console.ReadLine());
-                    if (respconsulta == 1 || respconsulta == 2)
+                    if (respconsulta == 1 || respconsulta == 2 || respconsulta == 3)
                     {
                         interruptorconsulta = false;
                     }
@@ -281,9 +283,14 @@ namespace CreditCalc
                     Console.WriteLine("Selecione o que deseja mostrar:");
                     Console.WriteLine("1 - Tudo");
                     Console.WriteLine("2 - Mês/Ano Especifico");
+                    Console.WriteLine("3 - {0}/{1}", DateTime.Today.Month, DateTime.Today.Year);
                     Console.Write(">");
                 }
             } while (interruptorconsulta);
+            if (respconsulta == 3) {
+                respconsulta3 = 3;
+                respconsulta = 2;
+                    }
             Console.Clear();
                 switch (respconsulta)
                 {
@@ -331,15 +338,24 @@ namespace CreditCalc
                         Start(today, FSdocPath);
                         break;
                     case 2:
+                        string mesresp = "undefined";
+                        string anoresp = "undefined";
+                        if (respconsulta3 != 3)
+                        {
                         Console.WriteLine("Qual ano deseja verificar?");
                         Console.Write(">");
-                        string anoresp = Console.ReadLine();
+                        anoresp = Console.ReadLine();
                         Console.Clear();
                         Console.WriteLine("Ano: {0}", anoresp);
                         Console.WriteLine("Qual mês deseja verificar?");
                         Console.Write(">");
-                        string mesresp = Console.ReadLine();
+                        mesresp = Console.ReadLine();
                         Console.Clear();
+                        } else
+                        {
+                        mesresp = Convert.ToString(DateTime.Today.Month);
+                        anoresp = Convert.ToString(DateTime.Today.Year);
+                        }
                         Console.WriteLine("Consultando: {0}/{1}", mesresp, anoresp);
                         Console.WriteLine();
                         string datetemp = @"01/" + mesresp + @"/" + anoresp;
@@ -350,6 +366,7 @@ namespace CreditCalc
                         int count = 0;
                         int count2 = 0;
                         int count3 = 0;
+                        bool valorswitch = false;
                         double valores = 0;
                         double limite = 0;
                         var textLines = File.ReadAllLines(FSdocPath);
@@ -366,9 +383,10 @@ namespace CreditCalc
                                         dataArraystring = Convert.ToString(dataArray[i]);
                                         dataTimeArray = Convert.ToDateTime(dataArraystring);
                                     }
-                                    if (count2 == 2)
+                                    if (count2 == 2 && valorswitch == true)
                                     {
                                         valores += Convert.ToDouble(dataArray[i].Replace('.', ','));
+                                        valorswitch = false;
                                     }
                                     if (dataTimeArray.Year == dataliquida.Year && dataTimeArray.Month == dataliquida.Month)
                                     {
@@ -377,6 +395,7 @@ namespace CreditCalc
                                         Console.Write("      ");
                                         count++;
                                         count2++;
+                                        valorswitch = true;
                                         if ((count % 3) == 0)
                                         {
                                             Console.WriteLine();
@@ -424,7 +443,7 @@ namespace CreditCalc
         {
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + "- BETA 1.0");
+            Console.WriteLine(today + "- BETA 1.1");
             string FSdocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc");
             FileStream FSdoc;
             string limiteresp = "undefined";
