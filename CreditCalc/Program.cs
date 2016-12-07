@@ -189,11 +189,19 @@ namespace CreditCalc
             var textLines = File.ReadAllLines(FSdocPath);
             List<string[]> dataList = new List<string[]>();
             int count = 0;
-            string[] dataArray = new string[textLines.Length];
+            int count2 = 0;
+            string limite = "undefined";
+            string[] dataArray = new string[textLines.Length - 1];
+            string[] dataArraySplit = new string[dataArray.Length];
             foreach (var line in textLines)
             {
-
-                dataArray[count] = line;
+                if (count != 0)
+                {
+                    dataArray[count - 1] = line;
+                } else
+                {
+                    limite = line;
+                }
                 count++;
 
             }
@@ -201,7 +209,26 @@ namespace CreditCalc
             foreach(var line in dataArray)
             {
                 count++;
-                Console.WriteLine("ID {0} - {1}", count, dataArray[count-1]);
+                count2 = 0;
+                Console.Write("ID {0} - ", count);
+                for (int i = 0; i < dataArraySplit.Length; i++) {
+                    dataArraySplit = line.Split(',');
+                    Console.Write(dataArraySplit[i]);
+                    switch (count2)
+                    {
+                        case 0:
+                            Console.Write("......");
+                            break;
+                        case 1:
+                            for (int ii = 0; ii < (25 - dataArraySplit[i].Length); ii++)
+                                Console.Write(".");
+                            Console.Write("......");
+                            break;
+                    }
+                    if (count2 == 2)
+                        Console.WriteLine();
+                    count2++;
+                }
             }
             Console.WriteLine();
             Console.WriteLine("Digite o ID que deseja remover (Deixar em branco para voltar)");
@@ -245,7 +272,8 @@ namespace CreditCalc
                     }
                     
             }
-            File.WriteAllLines(FSdocPath, dataArrayOrg);
+            File.WriteAllText(FSdocPath, limite + Environment.NewLine);
+            File.AppendAllLines(FSdocPath, dataArrayOrg);
                 Remover(today, FSdocPath);
         }
 
@@ -314,7 +342,17 @@ namespace CreditCalc
                                         valoresall += Convert.ToDouble(dataArrayall[i].Replace('.', ','));
                                     }
                                     Console.Write(dataArrayall[i]);
-                                    Console.Write("      ");
+                                switch (count2all)
+                                {
+                                    case 0:
+                                        Console.Write("......");
+                                        break;
+                                    case 1:
+                                        for (int ii = 0; ii < (25 - dataArrayall[i].Length); ii++)
+                                            Console.Write(".");
+                                        Console.Write("......");
+                                        break;
+                                }
                                     countall++;
                                     count2all++;
                                     if ((countall % 3) == 0)
@@ -392,7 +430,18 @@ namespace CreditCalc
                                     {
                                         Console.Write(dataArray[i]);
 
-                                        Console.Write("      ");
+                                    switch (count2)
+                                    {
+                                        case 0:
+                                            Console.Write("......");
+                                            break;
+                                        case 1:
+                                            for (int ii = 0; ii < (25 - dataArray[i].Length); ii++)
+                                                Console.Write(".");
+                                            Console.Write("......");
+                                            break;
+                                    }
+                                        
                                         count++;
                                         count2++;
                                         valorswitch = true;
@@ -443,7 +492,7 @@ namespace CreditCalc
         {
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + "- BETA 1.1");
+            Console.WriteLine(today + "- BETA 1.2");
             string FSdocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc");
             FileStream FSdoc;
             string limiteresp = "undefined";
