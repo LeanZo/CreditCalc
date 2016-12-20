@@ -29,7 +29,7 @@ namespace CreditCalc
             catch (Exception)
             {
                 Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
-                Console.WriteLine("Enter para continuar...");
+                Console.WriteLine("Pressione qualquer tecla...");
                 Console.ReadKey();
                 Start(today, FSdocPath);
                 return;
@@ -68,17 +68,18 @@ namespace CreditCalc
             try
             {
                 respdata = Convert.ToInt32(Console.ReadLine());
+                if (respdata > 2 || respdata < 1)
+                    throw new Exception();
             }
             catch (Exception)
             {
                 Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
-                Console.WriteLine("Enter para continuar");
+                Console.WriteLine("Pressione qualquer tecla...");
                 Console.ReadKey();
                 Adicionar(today, FSdocPath);
                 return;
             }
 
-            string nulltest = "undefined";
             bool interruptor = true;
             bool interruptor2 = true;
             while (interruptor)
@@ -91,7 +92,7 @@ namespace CreditCalc
                         break;
                     case 2:
                         Console.Clear();
-                        Console.WriteLine("Digite o dia, mês e ano(dd/MM/yyyy)");
+                        Console.WriteLine("Digite o dia, mês e ano(Dia/Mês/Ano)");
                         Console.Write(">");
                         do
                         {
@@ -112,41 +113,105 @@ namespace CreditCalc
                         interruptor = false;
 
                         break;
-                    default:
-                        Console.WriteLine("Sua resposta não é valida, digite uma das opções acima:");
-                        Console.Write(">");
-                        nulltest = Console.ReadLine();
-                        if (String.IsNullOrEmpty(nulltest))
-                        {
-                            respdata = 50;
-                        }
-                        else
-                        {
-                            respdata = Convert.ToInt32(nulltest);
-                        }
-                        break;
                 }
             }
-
+            bool interruptordesc = true;
             Console.Clear();
             Console.WriteLine("Data: {0}", data);
-            Console.WriteLine("Insira uma descrição (apenas 25 caracteres)");
+            Console.WriteLine("Insira uma descrição (Máximo 30 caracteres)");
             Console.Write(">");
-            string descricaobruto = Console.ReadLine();
-            string descricao = descricaobruto.Substring(0, descricaobruto.Length);
-            if (String.IsNullOrEmpty(descricao))
-                descricao = "---";
+            int cursotop = Console.CursorTop;
+            string descricao = "undefined";
+            descricao = Console.ReadLine();
+            bool switchelse = false;
+            do
+            {
+                if (switchelse)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Data: {0}", data);
+                    Console.WriteLine("Insira uma descrição (Máximo 30 caracteres)");
+                    Console.WriteLine(">{0}", descricao);
+
+                    switchelse = false;
+                }
+                if (String.IsNullOrEmpty(descricao))
+                {
+                    descricao = " --- ";
+                }
+                if (descricao.Length > 30)
+                {
+                    Console.WriteLine("");
+                    Console.WriteLine("Máximo de caracteres ultrapassado. Você digitou {0} caracteres", descricao.Length);
+                    Console.WriteLine("Se continuar os caracteres extras serão excluidos");
+                    Console.WriteLine("Deseja continuar? (S/N)");
+                    Console.Write(">");
+                    string resp30 = Console.ReadLine().ToUpper();
+                    if (resp30 == "N")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Data: {0}", data);
+                        Console.WriteLine("Insira uma descrição (Máximo 30 caracteres)");
+                        Console.Write(">");
+                        descricao = Console.ReadLine();
+                    }else if(resp30 == "S")
+                    {
+                        descricao = descricao.Substring(0, 30);
+                        interruptordesc = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
+                        Console.WriteLine("Pressione qualquer tecla...");
+                        Console.ReadKey();
+                        switchelse = true;
+                    }
+
+
+                }
+                else
+                {
+                    interruptordesc = false;
+                }
+
+            } while (interruptordesc);
 
             Console.Clear();
             Console.WriteLine("Data:              {0}", data);
             Console.WriteLine("Descrição:         {0}", descricao);
             Console.Write    ("Digite o valor:    R$ ");
-            string valor = Console.ReadLine();
-            valor = valor.Replace(',', '.');
-            if (String.IsNullOrEmpty(valor))
-                valor = "0";
+            string valor = "undefined";
+            bool valorinterruptor = true;
+            double valordouble = 0;
+            do
+            {
+                try
+                {
+                    valor = Console.ReadLine();
+                    valor = valor.Replace(',', '.');
+                    valordouble = Convert.ToDouble(valor);
+                    if (String.IsNullOrEmpty(valor) || valor == "0")
+                    {
+                        throw new Exception();
+                    }
+                    else
+                    {
+                        valorinterruptor = false;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
+                    Console.WriteLine("Pressione qualquer tecla...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    Console.WriteLine("Data:              {0}", data);
+                    Console.WriteLine("Descrição:         {0}", descricao);
+                    Console.Write("Digite o valor:    R$ ");
+                }
+            } while (valorinterruptor);
 
-            Dictionary<string, string> dicio = new Dictionary<string, string>();
+                Dictionary<string, string> dicio = new Dictionary<string, string>();
             dicio.Add(data, valor);
 
             foreach (var entry in dicio)
@@ -223,13 +288,18 @@ namespace CreditCalc
             string respbruto = Console.ReadLine();
             int removerresp = 0;
             int cursotop = 0;
+            bool boolstart = false;
 
             do
             {
                 try
                 {
                     if (String.IsNullOrEmpty(respbruto))
-                        Start(today, FSdocPath);
+                    {
+                        interruptor = false;
+                        boolstart = true;
+                        break;
+                    }
                     removerresp = Convert.ToInt32(respbruto);
                     if (removerresp <= 0 || removerresp > count)
                         throw new Exception();
@@ -246,6 +316,8 @@ namespace CreditCalc
                             respbruto = Console.ReadLine();
                 }
             } while (interruptor);
+            if (boolstart)
+                Start(today, FSdocPath);
             string[] dataArrayOrg = new string[dataArray.Length - 1];
             dataArray[removerresp - 1] = null;
             count = 0;
@@ -300,10 +372,10 @@ namespace CreditCalc
                 catch (Exception)
                 {
                     Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
-                    Console.WriteLine("Enter para continuar...");
-                    Console.ReadLine();
+                    Console.Write("Pressione qualquer tecla...");
+                    Console.ReadKey();
                     Console.Clear();
-                    Console.WriteLine("Selecione o que deseja mostrar:");
+                    Console.WriteLine("Selecione o que deseja consultar:");
                     Console.WriteLine("1 - Tudo");
                     Console.WriteLine("2 - Mês/Ano Especifico");
                     Console.WriteLine("3 - {0}/{1}", DateTime.Today.Month, DateTime.Today.Year);
@@ -343,7 +415,7 @@ namespace CreditCalc
                                         Console.Write("......");
                                         break;
                                     case 1:
-                                        for (int ii = 0; ii < (25 - dataArrayall[i].Length); ii++)
+                                        for (int ii = 0; ii < (30 - dataArrayall[i].Length); ii++)
                                             Console.Write(".");
                                         Console.Write("......");
                                         break;
@@ -364,23 +436,29 @@ namespace CreditCalc
                             }
                         }
                         Console.WriteLine();
-                        Console.WriteLine("Total gasto: R$ {0}", valoresall);
+                        Console.WriteLine("Total: R$ {0}", valoresall);
                         Console.WriteLine();
                         Console.WriteLine("Enter: Voltar");
-                        Console.ReadKey();
-                        Start(today, FSdocPath);
+                        bool enterinterruptor = true;
+                        do
+                        {
+                        
+                        string enter = Console.ReadKey(true).Key.ToString();
+                        if (enter == "Enter")
+                            Start(today, FSdocPath);
+                        } while (enterinterruptor);
                         break;
                     case 2:
                         string mesresp = "undefined";
                         string anoresp = "undefined";
                         if (respconsulta3 != 3)
                         {
-                        Console.WriteLine("Qual ano deseja verificar?");
+                        Console.WriteLine("Qual ano deseja consultar?");
                         Console.Write(">");
                         anoresp = Console.ReadLine();
                         Console.Clear();
                         Console.WriteLine("Ano: {0}", anoresp);
-                        Console.WriteLine("Qual mês deseja verificar?");
+                        Console.WriteLine("Qual mês deseja consultar?");
                         Console.Write(">");
                         mesresp = Console.ReadLine();
                         Console.Clear();
@@ -389,13 +467,23 @@ namespace CreditCalc
                         mesresp = Convert.ToString(DateTime.Today.Month);
                         anoresp = Convert.ToString(DateTime.Today.Year);
                         }
-                        Console.WriteLine("Consultando: {0}/{1}", mesresp, anoresp);
-                        Console.WriteLine();
                         string datetemp = @"01/" + mesresp + @"/" + anoresp;
                         string databruta = datetemp;
-                        DateTime dataliquida = Convert.ToDateTime(databruta);
+                        DateTime dataliquida = DateTime.Today;
+                        try
+                        {
+                       dataliquida = Convert.ToDateTime(databruta);
+                        } catch(Exception)
+                        {
+                        Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
+                        Console.Write("Pressione qualquer tecla...");
+                        Console.ReadKey();
+                        Start(today, FSdocPath);
+                        }
                         DateTime dataTimeArray = new DateTime();
                         string dataArraystring = "undefined";
+                        Console.WriteLine("Consultando: {0}/{1}", mesresp, anoresp);
+                        Console.WriteLine();
                         int count = 0;
                         int count2 = 0;
                         int count3 = 0;
@@ -431,7 +519,7 @@ namespace CreditCalc
                                             Console.Write("......");
                                             break;
                                         case 1:
-                                            for (int ii = 0; ii < (25 - dataArray[i].Length); ii++)
+                                            for (int ii = 0; ii < (30 - dataArray[i].Length); ii++)
                                                 Console.Write(".");
                                             Console.Write("......");
                                             break;
@@ -467,14 +555,19 @@ namespace CreditCalc
                         }
                         Console.WriteLine();
                         if (limite != 0)
-                        Console.WriteLine("O seu limite é: R$ {0}", limite);
-                        Console.WriteLine("Você ja gastou: R$ {0}", valores);
+                        Console.WriteLine("Limite: R$ {0}", limite);
+                        Console.WriteLine("Total: R$ {0}", valores);
                         if (limite != 0)
-                        Console.WriteLine("Restam: R$ " + (limite - valores));
+                        Console.WriteLine("Resto: R$ " + (limite - valores));
                         Console.WriteLine();
                         Console.WriteLine("Enter: Voltar");
-                        Console.ReadKey();
-                        Start(today, FSdocPath);
+                        bool enterinterruptor2 = true;
+                        do
+                        {
+                        string enter = Console.ReadKey(true).Key.ToString();
+                        if (enter == "Enter")
+                            Start(today, FSdocPath);
+                        } while (enterinterruptor2);
                         break;
                     default:
 
@@ -487,7 +580,7 @@ namespace CreditCalc
         {
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + "- BETA 1.3");
+            Console.WriteLine(today + "- BETA 1.4");
             string FSdocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc");
             FileStream FSdoc;
             string limiteresp = "undefined";
