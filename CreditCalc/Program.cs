@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CreditCalc
 {
@@ -92,7 +93,7 @@ namespace CreditCalc
                         break;
                     case 2:
                         Console.Clear();
-                        Console.WriteLine("Digite o dia, mês e ano(Dia/Mês/Ano)");
+                        Console.WriteLine("Digite o dia, mês e ano (Dia/Mês/Ano)");
                         Console.Write(">");
                         do
                         {
@@ -104,7 +105,11 @@ namespace CreditCalc
                             }
                             catch (Exception)
                             {
-                                Console.WriteLine("Formato invalido! Insira a data corretamente");
+                                Console.WriteLine("Formato inválido! Insira a data corretamente");
+                                Console.Write("Pressione qualquer tecla...");
+                                Console.ReadKey();
+                                Console.Clear();
+                                Console.WriteLine("Digite o dia, mês e ano (Dia/Mês/Ano)");
                                 Console.Write(">");
                             }
                         } while (interruptor2);
@@ -221,16 +226,9 @@ namespace CreditCalc
             }
             Console.WriteLine();
             Console.WriteLine("Adicionado!");
-            Console.WriteLine();
-            Console.WriteLine("Realizar outra operação? (S/N)");
-            string respagain = Console.ReadLine().ToUpper();
-            if (respagain == "S")
-            {
-                Adicionar(today, FSdocPath);
-            } else
-            {
-                Start(today, FSdocPath);
-            }
+            Console.WriteLine("Pressione qualquer tecla...");
+            Console.ReadKey();
+            Start(today, FSdocPath);
 
         }
 
@@ -578,74 +576,138 @@ namespace CreditCalc
 
         static void Main(string[] args)
         {
+            Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CreditCalc"));
+            Regex rgx = new Regex(".fsdoc$");
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + "- BETA 1.4");
-            string FSdocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc");
-            FileStream FSdoc;
+            Console.WriteLine(today + " - STABLE 1.1");
+            Console.WriteLine();
+            string FSdocFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CreditCalc");
+            string[] FSdocFilesBrute = Directory.GetFiles(FSdocFolder);
+            int countfile = 0;
+            foreach (var file in FSdocFilesBrute)
+            {
+                if (rgx.IsMatch(file))
+                {
+                    countfile++;
+                }
+            }
+            string[] FSdocFiles = new string[countfile];
+            countfile = 0;
+            foreach (var file in FSdocFilesBrute)
+            {
+                if(rgx.IsMatch(file))
+                {
+                    FSdocFiles[countfile] = file;
+                    countfile++;
+                }
+            }
+            Console.WriteLine("Criar/Selecionar Perfil:");
+            Console.WriteLine("0 - Criar novo perfil...");
+            countfile = 1;
+            string fileRename = "undefined";
+            foreach (var file in FSdocFiles)
+            {
+                fileRename = file.Replace(FSdocFolder + "\\", "");
+                fileRename = fileRename.Replace(".fsdoc", "");
+                Console.WriteLine("{0} - {1}",countfile, fileRename);
+                countfile++;
+            }
+            Console.WriteLine();
+            Console.Write(">");
+            int cursorTop = Console.CursorTop;
+            bool perfilswitch = true;
+            int perfilResp = 0;
+            do
+            {
+                try
+                {
+                    perfilResp = Convert.ToInt32(Console.ReadLine());
+                    if (perfilResp < 0 || perfilResp > countfile - 1)
+                        throw new Exception();
+                    perfilswitch = false;
+                } catch(Exception)
+                {
+                    Console.WriteLine("Invalido! Tenha certeza de digitar corretamente");
+                    Console.WriteLine("Pressione qualquer tecla...");
+                    Console.ReadKey();
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    Console.WriteLine("                                        ");
+                    Console.SetCursorPosition(0, Console.CursorTop - 2);
+                    Console.WriteLine("                                                    ");
+                    Console.SetCursorPosition(0, cursorTop);
+                    Console.Write(">                                                  ");
+                    Console.SetCursorPosition(1, cursorTop);
+                }
+            } while (perfilswitch);
+
+            string FSdocPath2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc");
+            string FSdocPath = "undefined";
+
             string limiteresp = "undefined";
             string limiteresp2 = "undefined";
             bool limiteinterruptor = true;
-            if (File.Exists(FSdocPath))
+
+            if (perfilResp == 0) { 
+            Console.WriteLine("Criando um novo perfil");
+            Console.WriteLine("Enter para continuar...");
+            Console.ReadKey();
+            Console.Clear();
+            Console.WriteLine("Defina o nome do perfil");
+            Console.Write(">");
+            string perfilName = Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("Deseja definir um limite mensal? (S/N)");
+            Console.Write(">");
+            limiteresp2 = Console.ReadLine().ToUpper();
+            Console.Clear();
+            if (limiteresp2 == "S")
             {
-                FSdoc = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc"), FileMode.Open, FileAccess.ReadWrite);
-                Console.WriteLine("CreditCalc.fsdoc Encontrado");
+                Console.WriteLine("Defina o limite");
+                Console.Write("R$: ");
             }
-            else
+            do
             {
-                Console.WriteLine("Arquivo 'CreditCalc.fsdoc' não foi encontrado");
-                Console.WriteLine("Criando um novo arquivo 'CreditCalc.fsdoc'");
-                Console.WriteLine("Enter para continuar...");
-                Console.ReadKey();
-                Console.Clear();
-                Console.WriteLine("Deseja definir um limite mensal? (S/N)");
-                Console.Write(">");
-                limiteresp2 = Console.ReadLine().ToUpper();
-                Console.Clear();
-                if (limiteresp2 != "N")
+                try
                 {
+                    if (limiteresp2 == "S")
+                    {
+                        limiteresp = Console.ReadLine().Replace(',', '.');
+                    }
+                    else
+                    {
+                        limiteresp = "0";
+                    }
+                    Convert.ToDouble(limiteresp);
+                    limiteinterruptor = false;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Você tentou inserir um valor invalido, insira apenas numeros");
+                    Console.WriteLine("Pressione qualquer tecla...");
+                    Console.ReadKey();
+                    Console.Clear();
                     Console.WriteLine("Defina o limite");
                     Console.Write("R$: ");
                 }
-                do
-                {
-                    try
-                    {
-                        if (limiteresp2 != "N")
-                        {
-                            limiteresp = Console.ReadLine().Replace(',', '.');
-                        } else
-                        {
-                            limiteresp = "0";
-                        }
-                        Convert.ToDouble(limiteresp);
-                        limiteinterruptor = false;
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Você tentou inserir um valor invalido, insira apenas numeros");
-                        Console.WriteLine("Pressione qualquer tecla...");
-                        Console.ReadKey();
-                        Console.Clear();
-                        Console.WriteLine("Defina o limite");
-                        Console.Write("R$: ");
-                    }
-                } while (limiteinterruptor);
-                Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CreditCalc"));
-                using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc"))) { }
-                Console.WriteLine("...");
-                FSdoc = new FileStream(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/CreditCalc.fsdoc"), FileMode.Open, FileAccess.ReadWrite);
+            } while (limiteinterruptor);
+            using (File.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/"+ perfilName +".fsdoc"))) { }
+            Console.WriteLine("...");
+                FSdocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"CreditCalc/" + perfilName + ".fsdoc");
+            } else
+            {
+             FSdocPath = FSdocFiles[perfilResp - 1];
+
             }
-            FSdoc.Close();
             if(limiteresp != "undefined")
             File.AppendAllText(FSdocPath, limiteresp + Environment.NewLine);
+
             Console.WriteLine("Feito!");
             Console.WriteLine("Enter para continuar...");
             Console.ReadKey();
             Console.Clear();
 
             Start(today, FSdocPath);
-
 
             }
         }
