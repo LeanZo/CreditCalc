@@ -415,7 +415,7 @@ namespace CreditCalc
                                     case 1:
                                         for (int ii = 0; ii < (30 - dataArrayall[i].Length); ii++)
                                             Console.Write(".");
-                                        Console.Write("......");
+                                        Console.Write("......R$ ");
                                         break;
                                 }
                                     countall++;
@@ -519,7 +519,7 @@ namespace CreditCalc
                                         case 1:
                                             for (int ii = 0; ii < (30 - dataArray[i].Length); ii++)
                                                 Console.Write(".");
-                                            Console.Write("......");
+                                            Console.Write("......R$ ");
                                             break;
                                     }
                                         
@@ -580,7 +580,7 @@ namespace CreditCalc
             Regex rgx = new Regex(".fsdoc$");
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + " - STABLE 1.1");
+            Console.WriteLine(today + " - STABLE 1.2");
             Console.WriteLine();
             string FSdocFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CreditCalc");
             string[] FSdocFilesBrute = Directory.GetFiles(FSdocFolder);
