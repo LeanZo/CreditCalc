@@ -5,3 +5,10 @@ C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.pdb
 C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.csprojResolveAssemblyReference.cache
 C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.exe
 C:\Users\LeanZo\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.pdb
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.exe.config
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.exe
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\bin\Debug\CreditCalc.pdb
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.csprojResolveAssemblyReference.cache
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.csproj.CoreCompileInputs.cache
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.exe
+C:\Users\kashc\Documents\GitHub\CreditCalc\CreditCalc\obj\Debug\CreditCalc.pdb

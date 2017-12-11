@@ -504,7 +504,7 @@ namespace CreditCalc
                                     }
                                     if (count2 == 2 && valorswitch == true)
                                     {
-                                        valores += Convert.ToDouble(dataArray[i].Replace('.', ','));
+                                    valores += Convert.ToDouble(dataArray[i].Replace('.', ','));
                                         valorswitch = false;
                                     }
                                     if (dataTimeArray.Year == dataliquida.Year && dataTimeArray.Month == dataliquida.Month)
@@ -512,19 +512,20 @@ namespace CreditCalc
                                         Console.Write(dataArray[i]);
 
                                     switch (count2)
-                                    {
-                                        case 0:
-                                            Console.Write("......");
-                                            break;
-                                        case 1:
-                                            for (int ii = 0; ii < (30 - dataArray[i].Length); ii++)
-                                                Console.Write(".");
-                                            Console.Write("......R$ ");
-                                            break;
-                                    }
+                                        {
+                                            case 0:
+                                                Console.Write("......");
+                                                break;
+                                            case 1:
+                                                for (int ii = 0; ii < (30 - dataArray[i].Length); ii++)
+                                                    Console.Write(".");
+                                                Console.Write("......R$ ");
+                                                break;
+                                        }
                                         
                                         count++;
                                         count2++;
+                                        if(count2 == 2)
                                         valorswitch = true;
                                         if ((count % 3) == 0)
                                         {
@@ -580,7 +581,7 @@ namespace CreditCalc
             Regex rgx = new Regex(".fsdoc$");
             string today = DateTime.Now.ToString("dd/MM/yyyy");
             string month = DateTime.Now.Month.ToString();
-            Console.WriteLine(today + " - STABLE 1.2");
+            Console.WriteLine(today + " - STABLE 1.3");
             Console.WriteLine();
             string FSdocFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CreditCalc");
             string[] FSdocFilesBrute = Directory.GetFiles(FSdocFolder);
